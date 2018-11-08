@@ -28,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadCode(View view) {
 //        new DownloadWebpageCode().execute("https://developer.android.com/");
-        Intent i = new Intent(this, MyService.class);
+        Intent i = new Intent(this, MyIntentService.class);
         i.putExtra(WEB_URL, "https://developer.android.com/");
+        startService(i);
     }
 
     private class DownloadWebpageCode extends AsyncTask<String, Void, String> {
