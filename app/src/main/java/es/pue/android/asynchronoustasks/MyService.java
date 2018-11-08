@@ -1,11 +1,10 @@
 package es.pue.android.asynchronoustasks;
 
+import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
+import android.os.IBinder;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -13,29 +12,29 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MyService extends Service {
 
-    TextView txData;
-    static final String WEB_URL = "webUrl";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        txData = (TextView)findViewById(R.id.tvCode);
+    public MyService() {
     }
 
-    public void loadCode(View view) {
-//        new DownloadWebpageCode().execute("https://developer.android.com/");
-        Intent i = new Intent(this, MyService.class);
-        i.putExtra(WEB_URL, "https://developer.android.com/");
+    @Override
+    public IBinder onBind(Intent intent) {
+        // prevent anyone from binding to it
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String webUrl = intent.getStringExtra(MainActivity.WEB_URL);
+        new DownloadWebpageCode().execute();
+        return Service.START_NOT_STICKY;
     }
 
     private class DownloadWebpageCode extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String s) {
-            txData.setText(s);
+            //txData.setText(s);
+            Log.i("SERVICE", s);
         }
 
         @Override
