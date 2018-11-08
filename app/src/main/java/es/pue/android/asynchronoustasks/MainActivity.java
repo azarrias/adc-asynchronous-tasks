@@ -1,6 +1,9 @@
 package es.pue.android.asynchronoustasks;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView txData;
     static final String WEB_URL = "webUrl";
+    BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +28,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txData = (TextView)findViewById(R.id.tvCode);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String htmlCode = intent.getStringExtra("html");
+                txData.setText(htmlCode);
+            }
+        };
     }
 
     public void loadCode(View view) {
 //        new DownloadWebpageCode().execute("https://developer.android.com/");
-        Intent i = new Intent(this, MyIntentService.class);
+//        Intent i = new Intent(this, MyIntentService.class);
+        Intent i = new Intent(this, MyService.class);
         i.putExtra(WEB_URL, "https://developer.android.com/");
         startService(i);
     }
@@ -57,5 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
             return "No code";
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter("es.pue.android.asynchronoustasks.DATA_OK"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 }

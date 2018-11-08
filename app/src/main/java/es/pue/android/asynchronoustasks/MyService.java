@@ -26,7 +26,7 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String webUrl = intent.getStringExtra(MainActivity.WEB_URL);
-        new DownloadWebpageCode().execute();
+        new DownloadWebpageCode().execute(webUrl);
         return Service.START_NOT_STICKY;
     }
 
@@ -35,6 +35,10 @@ public class MyService extends Service {
         protected void onPostExecute(String s) {
             //txData.setText(s);
             Log.i("SERVICE", s);
+            Intent i = new Intent();
+            i.setAction("es.pue.android.asynchronoustasks.DATA_OK");
+            i.putExtra("html", s);
+            sendBroadcast(i);
         }
 
         @Override
